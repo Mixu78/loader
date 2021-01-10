@@ -35,10 +35,4 @@ public class Reader {
         JsonObject jsonObject = (JsonObject) JsonParser.parseString(data).getAsJsonObject().get(cheat);
         return new Gson().fromJson(jsonObject, Cheat.class);
     }
-
-    public Reader() throws IOException {
-        /*JsonObject jsonObject = JsonParser.parseString(out).getAsJsonObject();
-        JsonElement lol = jsonObject.get("wave");
-        System.out.println(lol);*/
-    }
 }

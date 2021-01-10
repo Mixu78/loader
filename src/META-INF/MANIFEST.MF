@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: club.popbob.Main
+Class-Path: gson-2.8.6.jar jna-5.6.0.jar jna-platform-5.6.0.jar
+

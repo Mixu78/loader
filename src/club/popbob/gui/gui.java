@@ -17,8 +17,8 @@ public class gui {
         JFrame frame = new JFrame("C4E");
         JComboBox<String> cheatList = new JComboBox<>(cheats);
         Cheat selected = Reader.getCheatData(Objects.requireNonNull(cheatList.getSelectedItem()).toString());
-        JLabel mcver = new JLabel("MC Version: " + selected.mcversion),
-                updated = new JLabel("Last Update: " + selected.updated);
+        JLabel mcver = new JLabel(" MC Version: " + selected.mcversion),
+                updated = new JLabel(" Last Update: " + selected.updated);
 
         cheatList.addActionListener(new ActionListener() {
             @Override

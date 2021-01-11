@@ -31,7 +31,7 @@ public class Loader {
         }
 
         AclFileAttributeView view = Files.getFileAttributeView(Paths.get(dll), AclFileAttributeView.class);
-        UserPrincipal userPrincipal = FileSystems.getDefault().getUserPrincipalLookupService().lookupPrincipalByGroupName("ALL APPLICATION PACKAGES");
+        UserPrincipal userPrincipal = FileSystems.getDefault().getUserPrincipalLookupService().lookupPrincipalByName("ALL APPLICATION PACKAGES");
         AclEntry entry = AclEntry.newBuilder()
                 .setType(AclEntryType.ALLOW)
                 .setPrincipal(userPrincipal)

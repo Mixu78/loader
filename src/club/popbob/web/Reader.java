@@ -16,7 +16,7 @@ public class Reader {
 
     static {
         try {
-            data = new Scanner(new URL("https://popbob.club/data.json").openStream(), StandardCharsets.UTF_8).useDelimiter("\\A").next();
+            data = new Scanner(new URL("https://popbob.club/data.json").openStream()).useDelimiter("\\A").next();
         } catch (IOException e) {
             e.printStackTrace();
         }

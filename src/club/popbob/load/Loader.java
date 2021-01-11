@@ -7,8 +7,12 @@ import com.sun.jna.platform.win32.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.*;
+import java.util.EnumSet;
+import java.util.List;
 
 import static com.sun.jna.platform.win32.WinNT.*;
 
@@ -26,8 +30,18 @@ public class Loader {
             Files.copy(in, Paths.get(dll));
         }
 
+        AclFileAttributeView view = Files.getFileAttributeView(Paths.get(dll), AclFileAttributeView.class);
+        UserPrincipal userPrincipal = FileSystems.getDefault().getUserPrincipalLookupService().lookupPrincipalByGroupName("ALL APPLICATION PACKAGES");
+        AclEntry entry = AclEntry.newBuilder()
+                .setType(AclEntryType.ALLOW)
+                .setPrincipal(userPrincipal)
+                .setPermissions(EnumSet.allOf(AclEntryPermission.class))
+                .build();
+        List<AclEntry> entries = view.getAcl();
+        entries.add(entry);
+        view.setAcl(entries);
+
         Kernel32.INSTANCE.Process32First(snapshot, processInfo);
-        System.out.println(processInfo.szExeFile);
         if(Native.toString(processInfo.szExeFile).contains(mc)) {
             System.out.println(processInfo.szExeFile);
             Kernel32.INSTANCE.CloseHandle(snapshot);

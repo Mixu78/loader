@@ -14,9 +14,22 @@ public class gui {
         String[] cheats = Reader.getCheats().toArray(new String[0]);
         JFrame frame = new JFrame("C4E");
 
+        JLabel mcver = new JLabel("Select a cheat");
+        mcver.setBounds(0, 20, 200, 100);
+
+        JLabel updated = new JLabel("Select a cheat");
+        updated.setBounds(0, 40, 200, 100);
+
         JComboBox<String> cheatList = new JComboBox<>(cheats);
         cheatList.setPreferredSize(new Dimension(200, 200));
         cheatList.setBounds(0,0,385, 50);
+        cheatList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mcver.setText("MC Version: " + Reader.getCheatData(Objects.requireNonNull(cheatList.getSelectedItem()).toString()).mcversion);
+                updated.setText("Last Update: " + Reader.getCheatData(Objects.requireNonNull(cheatList.getSelectedItem()).toString()).updated);
+            }
+        });
         JButton inject = new JButton("Inject");
         inject.setPreferredSize(new Dimension(50, 50));
         inject.setBounds(140, 110, 100, 50);
@@ -37,5 +50,7 @@ public class gui {
         frame.setVisible(true);
         frame.getContentPane().add(cheatList);
         frame.getContentPane().add(inject);
+        frame.getContentPane().add(mcver);
+        frame.getContentPane().add(updated);
     }
 }

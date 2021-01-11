@@ -1,9 +1,11 @@
 package club.popbob.load;
 
+import club.popbob.Cheat;
 import club.popbob.web.Reader;
 import com.sun.jna.*;
 import com.sun.jna.platform.win32.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -17,21 +19,43 @@ import java.util.List;
 import static com.sun.jna.platform.win32.WinNT.*;
 
 public class Loader {
-    public Loader(String cheat) throws IOException {
-        String dll = System.getProperty("user.dir") + "\\cheat.dll";
-        String mc = "Minecraft.Windows.exe";
-        WinDef.DWORD pid = null;
+    private Cheat thisCheat;
+    public Loader(Cheat cheat) {
+        thisCheat = cheat;
+
+        String fileType = thisCheat.file.split("\\.")[1];
+        //TODO: Make use of the "updated" variable to only redownload client when it has been updated
+        String cheatFile = System.getenv("APPDATA") + "\\cfe\\" + thisCheat.display_name + "." + thisCheat.file.split("\\.")[1];
+        System.out.println(cheatFile);
+        try {
+            try (InputStream in = new URL("https://popbob.club/" + thisCheat.file).openStream()) {
+                if (Files.exists(Paths.get(cheatFile)))
+                    Files.delete(Paths.get(cheatFile));
+                Files.copy(in, Paths.get(cheatFile));
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        if(fileType.equalsIgnoreCase("dll")) {
+            try {
+                loadDLL(cheatFile);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        } else if(fileType.equalsIgnoreCase("exe")) {
+            loadExe(cheatFile);
+        } else if(fileType.equalsIgnoreCase("jar")) {
+            loadJar(cheatFile);
+        }
+    }
+
+    public void loadDLL(String dll) throws Exception {
         Tlhelp32.PROCESSENTRY32 processInfo = new Tlhelp32.PROCESSENTRY32.ByReference();
         WinNT.HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPPROCESS, new WinDef.DWORD(0));
 
-        try (InputStream in = new URL("https://popbob.club/" + Reader.getCheatData(cheat).file).openStream()) {
-            if(Files.exists(Paths.get(dll)))
-                Files.delete(Paths.get(dll));
-            Files.copy(in, Paths.get(dll));
-        }
-
         AclFileAttributeView view = Files.getFileAttributeView(Paths.get(dll), AclFileAttributeView.class);
-        UserPrincipal userPrincipal = FileSystems.getDefault().getUserPrincipalLookupService().lookupPrincipalByName("ALL APPLICATION PACKAGES");
+        UserPrincipal userPrincipal = FileSystems.getDefault().getUserPrincipalLookupService().lookupPrincipalByGroupName("ALL APPLICATION PACKAGES");
         AclEntry entry = AclEntry.newBuilder()
                 .setType(AclEntryType.ALLOW)
                 .setPrincipal(userPrincipal)
@@ -41,15 +65,16 @@ public class Loader {
         entries.add(entry);
         view.setAcl(entries);
 
+        WinDef.DWORD pid = null;
         Kernel32.INSTANCE.Process32First(snapshot, processInfo);
-        if(Native.toString(processInfo.szExeFile).contains(mc)) {
+        if(Native.toString(processInfo.szExeFile).contains("Minecraft.Windows.exe")) {
             System.out.println(processInfo.szExeFile);
             Kernel32.INSTANCE.CloseHandle(snapshot);
             pid = processInfo.th32ProcessID;
         }
 
         while(Kernel32.INSTANCE.Process32Next(snapshot, processInfo)) {
-            if(Native.toString(processInfo.szExeFile).contains(mc)) {
+            if(Native.toString(processInfo.szExeFile).contains("Minecraft.Windows.exe")) {
                 com.sun.jna.platform.win32.Kernel32.INSTANCE.CloseHandle(snapshot);
                 pid = processInfo.th32ProcessID;
             }
@@ -64,5 +89,13 @@ public class Loader {
         dllptr.setString(0, dll);
         Kernel32.INSTANCE.WriteProcessMemory(process, remote, dllptr, dll.length(), null);
         Kernel32.INSTANCE.CreateRemoteThread(process, security_attributes, 0, LoadLibraryA, remote, 0, new DWORDByReference());
+    }
+
+    public void loadExe(String exe) {
+
+    }
+
+    public void loadJar(String jar) {
+
     }
 }

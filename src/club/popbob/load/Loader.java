@@ -1,6 +1,8 @@
 package club.popbob.load;
 
 import club.popbob.Cheat;
+import club.popbob.Config;
+import club.popbob.Main;
 import club.popbob.web.Reader;
 import com.sun.jna.*;
 import com.sun.jna.platform.win32.*;
@@ -20,21 +22,29 @@ import static com.sun.jna.platform.win32.WinNT.*;
 
 public class Loader {
     private final Cheat thisCheat;
+    private static final Config config = Main.config;
     public Loader(Cheat cheat) throws IOException {
+        var cheatUpdates = config.getConfig().cheatUpdates;
         thisCheat = cheat;
 
         String fileType = thisCheat.file.split("\\.")[1];
         //TODO: Make use of the "updated" variable to only redownload client when it has been updated
         String cheatFile = System.getenv("APPDATA") + "\\cfe\\" + thisCheat.display_name + "." + thisCheat.file.split("\\.")[1];
         System.out.println(cheatFile);
-        try {
-            try (InputStream in = new URL("https://popbob.club/binaries/" + thisCheat.file).openStream()) {
-                if (Files.exists(Paths.get(cheatFile)))
-                    Files.delete(Paths.get(cheatFile));
-                Files.copy(in, Paths.get(cheatFile));
+        //local cheat update time is different than api
+        //also why does java not have easy way to use empty string if null
+        if (!(cheatUpdates.get(cheat.display_name) == null ? "" : cheatUpdates.get(cheat.display_name)).equals(cheat.updated)) {
+            System.out.println(cheat.display_name);
+            cheatUpdates.put(cheat.display_name, cheat.updated);
+            try {
+                try (InputStream in = new URL("https://popbob.club/binaries/" + thisCheat.file).openStream()) {
+                    if (Files.exists(Paths.get(cheatFile)))
+                        Files.delete(Paths.get(cheatFile));
+                    Files.copy(in, Paths.get(cheatFile));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch(Exception e) {
-            e.printStackTrace();
         }
 
         if(fileType.equalsIgnoreCase("dll")) {

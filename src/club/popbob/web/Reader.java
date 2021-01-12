@@ -3,10 +3,7 @@ package club.popbob.web;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import club.popbob.Cheat;
 import com.google.gson.*;

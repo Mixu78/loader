@@ -19,8 +19,8 @@ import java.util.List;
 import static com.sun.jna.platform.win32.WinNT.*;
 
 public class Loader {
-    private Cheat thisCheat;
-    public Loader(Cheat cheat) {
+    private final Cheat thisCheat;
+    public Loader(Cheat cheat) throws IOException {
         thisCheat = cheat;
 
         String fileType = thisCheat.file.split("\\.")[1];
@@ -28,7 +28,7 @@ public class Loader {
         String cheatFile = System.getenv("APPDATA") + "\\cfe\\" + thisCheat.display_name + "." + thisCheat.file.split("\\.")[1];
         System.out.println(cheatFile);
         try {
-            try (InputStream in = new URL("https://popbob.club/" + thisCheat.file).openStream()) {
+            try (InputStream in = new URL("https://popbob.club/binaries/" + thisCheat.file).openStream()) {
                 if (Files.exists(Paths.get(cheatFile)))
                     Files.delete(Paths.get(cheatFile));
                 Files.copy(in, Paths.get(cheatFile));
@@ -95,7 +95,20 @@ public class Loader {
 
     }
 
-    public void loadJar(String jar) {
-
+    public void loadJar(String jar) throws IOException {
+        for(String lib : thisCheat.libs) {
+            try {
+                try (InputStream in = new URL("https://popbob.club/binaries/libraries/" + lib).openStream()) {
+                    String path = System.getenv("APPDATA") + "\\cfe\\libs\\" + lib;
+                    if (!Files.exists(Paths.get(path)))
+                        Files.copy(in, Paths.get(path));
+                    else
+                        in.close();
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+        Runtime.getRuntime().exec("java -jar " + jar);
     }
 }

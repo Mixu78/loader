@@ -32,11 +32,15 @@ public class gui {
 
         frame.getContentPane().add(mcver);
         frame.getContentPane().add(updated);
-        JButton inject = new JButton("Inject");
+        JButton inject = new JButton("Load");
         inject.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Loader(Reader.getCheatData(Objects.requireNonNull(cheatList.getSelectedItem()).toString()));
+                try {
+                    new Loader(Reader.getCheatData(Objects.requireNonNull(cheatList.getSelectedItem()).toString()));
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
             }
         });
         frame.getContentPane().add(inject);

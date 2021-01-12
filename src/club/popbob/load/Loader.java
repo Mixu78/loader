@@ -28,7 +28,6 @@ public class Loader {
         thisCheat = cheat;
 
         String fileType = thisCheat.file.split("\\.")[1];
-        //TODO: Make use of the "updated" variable to only redownload client when it has been updated
         String cheatFile = System.getenv("APPDATA") + "\\cfe\\" + thisCheat.display_name + "." + thisCheat.file.split("\\.")[1];
         System.out.println(cheatFile);
         //local cheat update time is different than api

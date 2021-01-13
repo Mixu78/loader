@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Config {
-    private ConfigObj config;
-    private File configFile;
-    private String defaultConfig = "{cheatUpdates: {}}";
+    private final ConfigObj config;
+    private final File configFile;
+    private final String defaultConfig = "{cheatUpdates: {}}";
 
     public static class ConfigObj {
         public Map<String, String> cheatUpdates;
@@ -57,7 +57,6 @@ public class Config {
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
-            return;
         }
     }
 }

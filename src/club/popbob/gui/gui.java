@@ -24,8 +24,8 @@ public class gui {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Cheat selected = Reader.getCheatData(Objects.requireNonNull(cheatList.getSelectedItem()).toString());
-                mcver.setText("MC Version: " + selected.mcversion);
-                updated.setText("Last Update: " + selected.updated);
+                mcver.setText(" MC Version: " + selected.mcversion);
+                updated.setText(" Last Update: " + selected.updated);
             }
         });
         frame.getContentPane().add(cheatList);

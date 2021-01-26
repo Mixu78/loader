@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.*;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 import static com.sun.jna.platform.win32.WinNT.*;
 
@@ -24,7 +25,7 @@ public class Loader {
     private final Cheat thisCheat;
     private static final Config config = Main.config;
     public Loader(Cheat cheat) throws IOException {
-        var cheatUpdates = config.getConfig().cheatUpdates;
+        Map<String, String> cheatUpdates = config.getConfig().cheatUpdates;
         thisCheat = cheat;
 
         String fileType = thisCheat.file.split("\\.")[1];

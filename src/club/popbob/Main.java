@@ -1,6 +1,7 @@
 package club.popbob;
 
 import club.popbob.gui.*;
+import club.popbob.web.Reader;
 
 import javax.swing.*;
 import java.io.File;

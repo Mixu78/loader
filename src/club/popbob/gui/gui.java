@@ -12,9 +12,9 @@ import club.popbob.web.Reader;
 import club.popbob.load.Loader;
 
 public class gui {
-    public gui() {
+    public gui() throws IOException {
         String[] cheats = Reader.getCheats().toArray(new String[0]);
-        JFrame frame = new JFrame("C4E");
+        JFrame frame = new JFrame("C4E | " + Reader.getMotd());
         JComboBox<String> cheatList = new JComboBox<>(cheats);
         Cheat selected = Reader.getCheatData(Objects.requireNonNull(cheatList.getSelectedItem()).toString());
         JLabel mcver = new JLabel(" MC Version: " + selected.mcversion),

@@ -1,8 +1,8 @@
 package club.popbob.web;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import club.popbob.Cheat;
@@ -10,13 +10,16 @@ import com.google.gson.*;
 
 public class Reader {
     public static String data;
-
     static {
         try {
             data = new Scanner(new URL("https://popbob.club/data.json").openStream()).useDelimiter("\\A").next();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String getMotd() throws IOException {
+        return new Scanner(new URL("https://popbob.club/motd.txt").openStream()).useDelimiter("\\A").next();
     }
 
     public static Vector<String> getCheats() {

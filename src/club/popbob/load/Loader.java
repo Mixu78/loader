@@ -3,11 +3,9 @@ package club.popbob.load;
 import club.popbob.Cheat;
 import club.popbob.Config;
 import club.popbob.Main;
-import club.popbob.web.Reader;
 import com.sun.jna.*;
 import com.sun.jna.platform.win32.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -101,8 +99,8 @@ public class Loader {
         Kernel32.INSTANCE.CreateRemoteThread(process, security_attributes, 0, LoadLibraryA, remote, 0, new DWORDByReference());
     }
 
-    public void loadExe(String exe) {
-
+    public void loadExe(String exe) throws IOException {
+        Runtime.getRuntime().exec("cmd /c start cmd.exe /C\"" + exe + "\"");
     }
 
     public void loadJar(String jar) throws IOException {

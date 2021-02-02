@@ -7,15 +7,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Config {
     private final ConfigObj config;
-    private final File configFile;
-    private final String defaultConfig = "{cheatUpdates: {}}";
+    public final File configFile;
+    private final String defaultConfig = "{cheatUpdates: {}, bigrat: false}";
 
     public static class ConfigObj {
         public Map<String, String> cheatUpdates;
+        public boolean bigrat = false;
     }
 
     public Config(File configFile) {

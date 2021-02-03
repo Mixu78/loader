@@ -2,6 +2,7 @@ package club.popbob.gui;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.plaf.basic.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -69,16 +70,7 @@ public class gui {
                 }
             }
         });
-        JComboBox<String> cheatList = new JComboBox<>(cheats) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                if (!isOpaque() && getBackground().getAlpha() < 255) {
-                    g.setColor(getBackground());
-                    g.fillRect(0, 0, getWidth(), getHeight());
-                }
-                super.paintComponent(g);
-            }
-        };
+        JComboBox<String> cheatList = new JComboBox<>(cheats);
         Cheat selected = Reader.getCheatData(Objects.requireNonNull(cheatList.getSelectedItem()).toString());
         JLabel mcver = new JLabel(" MC Version: " + selected.mcversion),
                 updated = new JLabel(" Last Update: " + selected.updated);
@@ -103,6 +95,7 @@ public class gui {
         mcver.setBackground(transparent);
         updated.setBackground(transparent);
         cheatList.setBackground(transparent);
+        cheatList.setForeground(transparent);
         inject.setBackground(transparent);
         mcver.setOpaque(true);
         updated.setOpaque(true);
@@ -114,6 +107,70 @@ public class gui {
 
         inject.setContentAreaFilled(false);
 
+        cheatList.setUI(new BasicComboBoxUI(){
+            @Override
+            public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) { }
+
+            @Override
+            protected JButton createArrowButton() {
+                JButton button = new BasicArrowButton(BasicArrowButton.SOUTH,
+                        transparent,
+                        null,
+                        null,
+                        null
+                );
+                button.setContentAreaFilled(false);
+                return button;
+            }
+
+            @Override
+            public void paintCurrentValue(Graphics g, Rectangle bounds, boolean hasFocus) {
+                var renderer = comboBox.getRenderer();
+                Component c;
+
+                if ( hasFocus && !isPopupVisible(comboBox) ) {
+                    c = renderer.getListCellRendererComponent( listBox,
+                            comboBox.getSelectedItem(),
+                            -1,
+                            true,
+                            false );
+                }
+                else {
+                    c = renderer.getListCellRendererComponent( listBox,
+                            comboBox.getSelectedItem(),
+                            -1,
+                            false,
+                            false );
+                }
+
+                c.setFont(comboBox.getFont());
+                c.setBackground(comboBox.getBackground());
+
+                boolean shouldValidate = false;
+                if (c instanceof JPanel)  {
+                    shouldValidate = true;
+                }
+
+                int x = bounds.x, y = bounds.y, w = bounds.width, h = bounds.height;
+                if (padding != null) {
+                    x = bounds.x + padding.left;
+                    y = bounds.y + padding.top;
+                    w = bounds.width - (padding.left + padding.right);
+                    h = bounds.height - (padding.top + padding.bottom);
+                }
+
+                currentValuePane.paintComponent(g,c,comboBox,x,y,w,h,shouldValidate);
+
+            }
+        });
+
+        cheatList.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
+            JLabel result = new JLabel(value);
+            result.setOpaque(true);
+            result.setBackground(isSelected ? Color.blue : Color.white);
+            result.setForeground(isSelected ? Color.white : Color.black);
+            return result;
+        });
 
         cheatList.addActionListener(e -> {
             Cheat selected1 = Reader.getCheatData(Objects.requireNonNull(cheatList.getSelectedItem()).toString());
